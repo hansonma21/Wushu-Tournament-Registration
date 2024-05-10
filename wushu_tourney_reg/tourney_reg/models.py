@@ -20,6 +20,8 @@ class Profile(models.Model):
     """A user's profile; is a User; is a Registrant (for multiple tournaments); has Registrations (for multiple events); can judge multiple TournamentEvents"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True) # e.g. profile picture (null because optional)
+
     first_name = models.TextField() # e.g. John
     middle_name = models.TextField(null=True, blank=True) # e.g. Quincy (null because optional)
     last_name = models.TextField() # e.g. Doe
@@ -33,6 +35,8 @@ class Profile(models.Model):
     school_or_club = models.TextField(null=True, blank=True) # e.g. Ohio Wushu Academy (null because optional)
 
     usawkf_id = models.TextField(blank=True, null=True, unique=True) # e.g. 123456 (null because optional)
+
+    is_judge = models.BooleanField(default=False) # e.g. True (True if judge, False if not)
 
     class Meta:
         ordering = ['last_name', 'first_name']
@@ -59,6 +63,9 @@ class Tournament(models.Model):
     early_registration_end_date_time = models.DateTimeField(blank=True, null=True) # e.g. 2024-06-01 23:59:59 (null if no early registration)
     registration_end_date_time = models.DateTimeField() # e.g. 2024-07-01 23:59:59
 
+    is_active = models.BooleanField(default=True) # e.g. True
+    is_locked = models.BooleanField(default=False) # e.g. False
+
     class Meta:
         ordering = ['start_date_time']
 
@@ -82,7 +89,7 @@ class Tournament(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.name} ({self.start_date_time} - {self.end_date_time}), {self.location}"
+        return f"{self.name} ({self.start_date_time.year})"
 
 class Event(models.Model):
     """An event that can be part of a tournament (e.g. Taiji, Changquan, etc.); has TournamentEvents (defines the type of event the TournamentEvent is)"""
@@ -90,6 +97,7 @@ class Event(models.Model):
     english_name = models.TextField() # e.g. Compulsory Southern Fist
     chinese_name = models.TextField() # e.g. 规定南拳
     description = models.TextField(null=True, blank=True) # e.g. Southern Fist is... (null if no description)
+    judging_criteria = models.TextField(null=True, blank=True) # e.g. Judging criteria for this event (null if no judging criteria)
     rules = models.TextField(null=True, blank=True) # e.g. Additional specifications/rules for this event
 
     min_age = models.IntegerField(validators=[MinValueValidator(0)]) # e.g. 18 (null if no minimum age, so 0)
@@ -123,13 +131,16 @@ class TournamentEvent(models.Model):
     """A specific event that is part of a tournament (e.g. 6th Ohio International Chinese Martial Arts Tournament Registration 2024 - Compulsory Southern Fist); has Registrations; belongs to a Tournament and an Event"""
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    judges = models.ManyToManyField(Profile) # could be a list of judges for this event
+    judges = models.ManyToManyField(Profile, limit_choices_to={'is_judge': True}, blank=True) # could be a list of judges for this event
     # can access registrations for this tournament event by accessing the Registrations that have this tournament_event
 
     order = models.IntegerField(validators=[MinValueValidator(1)]) # e.g. 1 (the order in which the event is held in the tournament)
     mat_or_location = models.TextField() # e.g. Mat 1, Mat 2, etc.
-    max_participants = models.IntegerField(validators=[MinValueValidator(1)]) # e.g. 50
+    max_participants = models.IntegerField(validators=[MinValueValidator(1)], default=999) # e.g. 50
+
     registration_open = models.BooleanField() # e.g. True, times are based on the tournament's registration_open, early_registration_end_date_time, and registration_end_date_time
+    is_active = models.BooleanField(default=True) # e.g. True
+    is_locked = models.BooleanField(default=False) # e.g. False
 
     class Meta:
         ordering = ['tournament', 'event', 'order']
@@ -149,10 +160,11 @@ class TournamentEvent(models.Model):
         return f"{self.tournament.name} - {self.event.english_name} - {self.mat_or_location} - #{self.order}"
 
 class Registrant(models.Model):
-    """A person/group who is registering for a specific tournament event; has Registrations, belongs to a Tournament, made up of User(s); has Registrations"""
+    """A person/group who is registering for tournament events; has Registrations, belongs to a Tournament, made up of User(s); has Registrations"""
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     users = models.ManyToManyField(Profile) # could be a list of users for this registrant (e.g. a group)
 
+    created_date_time = models.DateTimeField(default=timezone.now) # e.g. 2024-07-01 12:00:00
     is_group = models.BooleanField() # e.g. True (True if group, False if individual)
     group_name = models.TextField(blank=True, null=True) # e.g. John Doe (null if individual)
 
@@ -212,6 +224,7 @@ class Registration(models.Model):
     tournament_event = models.ForeignKey(TournamentEvent, on_delete=models.CASCADE)
     registrant = models.ForeignKey(Registrant, on_delete=models.CASCADE) # could be a group or individual
 
+    notes = models.TextField(null=True, blank=True) # e.g. Will pay at the door (null if no notes)
     registered_date_time = models.DateTimeField(default=timezone.now) # e.g. 2024-07-01 12:00:00
 
     is_paid = models.BooleanField() # e.g. True

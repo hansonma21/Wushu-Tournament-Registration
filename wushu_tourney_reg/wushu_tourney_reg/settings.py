@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tourney_profiles',
     'tourney_reg',
     'tourney_scoring',
     'tourney_pages',

@@ -4,50 +4,29 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from tourney_profiles.models import Profile, SkillLevels, Sexes
 
-class Sexes(models.TextChoices):
-    MALE = 'male', 'Male'
-    FEMALE = 'female', 'Female'
-    OTHER = 'other', 'Other'
-
-class SkillLevels(models.TextChoices):
-    BEGINNER = 'beginner', 'Beginner'
-    INTERMEDIATE = 'intermediate', 'Intermediate'
-    ADVANCED = 'advanced', 'Advanced'
-
-# Create your models here.
-class Profile(models.Model):
-    """A user's profile; is a User; is a Registrant (for multiple tournaments); has Registrations (for multiple events); can judge multiple TournamentEvents"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True) # e.g. profile picture (null because optional)
-
-    first_name = models.TextField() # e.g. John
-    middle_name = models.TextField(null=True, blank=True) # e.g. Quincy (null because optional)
-    last_name = models.TextField() # e.g. Doe
-    birth_date = models.DateField() # e.g. 2000-01-01
-    sex = models.CharField(max_length=20, choices=Sexes.choices)
-    skill_level = models.TextField(null=True, choices=SkillLevels.choices) # e.g. Beginner, Intermediate, Advanced (not decided yet, null because optional)
-
-    email = models.EmailField() # e.g. example@gmail.com, REQUIRED
-    phone_number = models.TextField(null=True, blank=True) # e.g. 123-456-7890 (null because optional)
-
-    school_or_club = models.TextField(null=True, blank=True) # e.g. Ohio Wushu Academy (null because optional)
-
-    usawkf_id = models.TextField(blank=True, null=True, unique=True) # e.g. 123456 (null because optional)
-
-    is_judge = models.BooleanField(default=False) # e.g. True (True if judge, False if not)
+class AgeGroup(models.Model):
+    """An age group for an event; has a minimum and maximum age; part of Events"""
+    min_age = models.IntegerField(validators=[MinValueValidator(0)]) # e.g. 18
+    max_age = models.IntegerField(null=True, blank=True) # e.g. 99 (null if no maximum age like 60+)
+    is_active = models.BooleanField(default=True) # e.g. True
 
     class Meta:
-        ordering = ['last_name', 'first_name']
+        ordering = ['min_age', 'max_age']
 
-        # Ensure that the email and usawkf_id are unique
+        # Ensure that the min_age is non-negative
         constraints = [
-            models.UniqueConstraint(fields=['email'], name='unique_email', violation_error_message='This email is already in use.'),
+            models.UniqueConstraint(fields=['min_age', 'max_age'], name='unique_age_group', violation_error_message='This age group already exists.'),
+            models.CheckConstraint(check=models.Q(min_age__lte=models.F('max_age')), name='min_age_before_max_age', violation_error_message='The minimum age must be the same as or before the maximum age.'),
+            models.CheckConstraint(check=models.Q(min_age__gte=0), name='min_age_non_negative', violation_error_message='The minimum age must be non-negative.')
         ]
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.user.username}, {self.email})"
+        if self.max_age is not None:
+            return f"{self.min_age}-{self.max_age}"
+        else:
+            return f"{self.min_age}+"
 
 class Tournament(models.Model):
     """A tournament that is being held (e.g. each annual tournament would be its own); has TournamentEvents; has Registrants"""
@@ -92,16 +71,14 @@ class Tournament(models.Model):
         return f"{self.name} ({self.start_date_time.year})"
 
 class Event(models.Model):
-    """An event that can be part of a tournament (e.g. Taiji, Changquan, etc.); has TournamentEvents (defines the type of event the TournamentEvent is)"""
+    """An event that can be part of a tournament (e.g. Taiji, Changquan, etc.); has TournamentEvents (defines the type of event the TournamentEvent is); has an AgeGroup"""
+    age_group = models.ForeignKey(AgeGroup, on_delete=models.CASCADE)
 
     english_name = models.TextField() # e.g. Compulsory Southern Fist
     chinese_name = models.TextField() # e.g. 规定南拳
     description = models.TextField(null=True, blank=True) # e.g. Southern Fist is... (null if no description)
     judging_criteria = models.TextField(null=True, blank=True) # e.g. Judging criteria for this event (null if no judging criteria)
     rules = models.TextField(null=True, blank=True) # e.g. Additional specifications/rules for this event
-
-    min_age = models.IntegerField(validators=[MinValueValidator(0)]) # e.g. 18 (null if no minimum age, so 0)
-    max_age = models.IntegerField(null=True, blank=True) # e.g. 99 (null if no maximum age like 60+)
 
     skill_level = models.TextField(choices=SkillLevels.choices) # e.g. Beginner, Intermediate, Advanced
     sex = models.CharField(max_length=20, choices=Sexes.choices)
@@ -112,19 +89,15 @@ class Event(models.Model):
     is_nandu_event = models.BooleanField() # e.g. True (True if nandu, False if not)
 
     class Meta:
-        ordering = ['english_name', 'min_age', 'sex', 'skill_level']
+        ordering = ['english_name', 'sex', 'skill_level']
 
-        # Ensure that the english_name, chinese_name, skill_level, min_age, max_age, sex are unique,l
-        # that the min_age is less than or equal to the max_age,
-        # and that the min_age is non-negative
+        # Ensure that the english_name, chinese_name, skill_level, age_group, sex are unique,
         constraints = [
-            models.UniqueConstraint(fields=['english_name', 'chinese_name', 'skill_level', 'min_age, max_age', 'sex'], name='unique_event', violation_error_message='This event already exists.'),
-            models.CheckConstraint(check=models.Q(min_age__lte=models.F('max_age')), name='min_age_before_max_age', violation_error_message='The minimum age must be the same as or before the maximum age.'),
-            models.CheckConstraint(check=models.Q(min_age__gte=0), name='min_age_non_negative', violation_error_message='The minimum age must be non-negative.')
+            models.UniqueConstraint(fields=['english_name', 'chinese_name', 'skill_level', 'age_group', 'sex'], name='unique_event', violation_error_message='This event already exists.'),
         ]
     
     def __str__(self):
-        return f"{self.english_name} ({self.chinese_name}), {self.skill_level}, {self.min_age}-{self.max_age}, {self.skill_level}"
+        return f"{self.english_name} ({self.chinese_name}), {self.skill_level}, {self.age_group}, {self.skill_level}"
 
 
 class TournamentEvent(models.Model):
@@ -173,7 +146,7 @@ class Registrant(models.Model):
     is_kungfu_team_competitor = models.BooleanField() # e.g. True (True if kungfu team competitor, False if not)
 
     class Meta:
-        ordering = ['tournament', 'group_name', 'first_name', 'last_name']
+        ordering = ['tournament', 'group_name', 'users__first_name', 'users__last_name']
 
         # Ensure that the group_name is unique for the tournament if it is a group,
         # that the group_name is not null if it is a group,
@@ -183,8 +156,12 @@ class Registrant(models.Model):
             models.UniqueConstraint(fields=['tournament', 'group_name'], name='unique_group_name', violation_error_message='This group name already exists.'),
             models.CheckConstraint(check=models.Q(group_name__isnull=False) | models.Q(is_group=False), name='group_name_not_null_if_group', violation_error_message='The group name must not be null if it is a group.'),
             models.CheckConstraint(check=models.Q(group_name__isnull=True) | models.Q(is_group=True), name='group_name_null_if_not_group', violation_error_message='The group name must be null if it is not a group.'),
-            models.CheckConstraint(check=models.Q(is_group=True) | models.Q(users__count=1), name='one_user_if_not_group', violation_error_message='There must be only one user if it is not a group.')
         ]
+    
+    def save(self, *args, **kwargs):
+        if not self.is_group and self.users.count() > 1:
+            raise ValidationError('There must be only one user if it is not a group.')
+        super().save(*args, **kwargs)
     
     def __str__(self):
         if self.is_group:

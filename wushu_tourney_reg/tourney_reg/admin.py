@@ -1,16 +1,9 @@
 from django.contrib import admin
-from .models import Profile, Tournament, Event, TournamentEvent, Registration, Registrant
+from .models import AgeGroup, Profile, Tournament, Event, TournamentEvent, Registration, Registrant
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
-
-admin.site.unregister(User)
-class ProfileInline(admin.StackedInline):
-    model = Profile
-
-class ProfileAdmin(UserAdmin):
-    inlines = [ProfileInline]
 
 class TournamentAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -25,11 +18,20 @@ class TournamentAdmin(admin.ModelAdmin):
     list_filter = ['start_date_time', 'location', 'is_active', 'is_locked']
     search_fields = ['name', 'location']
 
+class AgeGroupAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['min_age', 'max_age']}),
+    ]
+
+    list_display = ['min_age', 'max_age']
+    list_filter = ['min_age', 'max_age']
+    search_fields = ['min_age', 'max_age']
+
 class EventAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['english_name', 'chinese_name', 
-                           'min_age', 'max_age', 
-                           'skill_level', 'sex', 'type_of_form']}),
+                           'age_group', 'skill_level', 
+                           'sex', 'type_of_form']}),
         ('Classifications', {'fields': ['is_group_event', 'is_weapon_event', 
                                         'is_taolu_event', 'is_nandu_event']}),
         ('Additional Information', {
@@ -53,9 +55,9 @@ class TournamentEventAdmin(admin.ModelAdmin):
         ('Status', {'fields': ['registration_open', 'is_active', 'is_locked']}),
     ]
 
-    list_display = ['tournament', 'event', 'location', 'registration_open', 'is_active', 'is_locked']
-    list_filter = ['tournament', 'event', 'location', 'is_active', 'is_locked']
-    search_fields = ['tournament', 'event', 'location']
+    list_display = ['tournament', 'event', 'mat_or_location', 'registration_open', 'is_active', 'is_locked']
+    list_filter = ['tournament', 'event', 'mat_or_location', 'is_active', 'is_locked']
+    search_fields = ['tournament', 'event', 'mat_or_location']
     filter_horizontal = ('judges',)
 
 class RegistrationAdmin(admin.ModelAdmin):
@@ -86,8 +88,8 @@ class RegistrantAdmin(admin.ModelAdmin):
     def registrant_name(self, obj):
         return obj.get_registrant_name()
 
-admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Tournament, TournamentAdmin)
+admin.site.register(AgeGroup, AgeGroupAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(TournamentEvent, TournamentEventAdmin)
 admin.site.register(Registration, RegistrationAdmin)

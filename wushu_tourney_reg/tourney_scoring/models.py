@@ -1,21 +1,21 @@
 from django.db import models
 
-from wushu_tourney_reg.tourney_reg.models import Registration, Profile, TournamentEvent
+from tourney_reg.models import Registration, Profile, TournamentEvent
 # Create your models here.
 
 class FinalScore(models.Model):
     """A scoring for a registrant's performance in a tournament event; belongs to a singular Registration; has Justifications"""
     registration = models.OneToOneField(Registration, on_delete=models.CASCADE)
 
-    final_score = models.FloatField(default=0.0) # e.g. 9.5
+    final_score = models.FloatField(null=True, blank=True) # e.g. 9.5
     final_rank = models.IntegerField(null=True, blank=True) # e.g. 1, probably start off as null
 
     class Meta:
         ordering = ['registration', 'final_rank', 'final_score']
 
         constraints = [
-            models.UniqueConstraint(fields=['registration', 'final_rank'], name='unique_registration'),
-            models.CheckConstraint(check=models.Q(final_score__gte=0) & models.Q(final_score__lte=10), name='score_range', violation_error_message='Score must be between 0 and 10'),
+            models.UniqueConstraint(fields=['registration', 'final_rank'], name='unique_registration_final_rank'),
+            models.CheckConstraint(check=models.Q(final_score__gte=0) & models.Q(final_score__lte=10), name='final_score_range', violation_error_message='Score must be between 0 and 10'),
             models.CheckConstraint(check=models.Q(final_rank__gte=1), name='rank_range', violation_error_message='Rank must be greater than 1')
         ]
 
@@ -35,7 +35,7 @@ class JudgeScore(models.Model):
 
         constraints = [
             models.UniqueConstraint(fields=['final_score', 'judge'], name='unique_judge_scoring'),
-            models.CheckConstraint(check=models.Q(judge_score__gte=0) & models.Q(judge_score__lte=10), name='score_range', violation_error_message='Score must be between 0 and 10')
+            models.CheckConstraint(check=models.Q(judge_score__gte=0) & models.Q(judge_score__lte=10), name='judge_score_range', violation_error_message='Score must be between 0 and 10')
         ]
 
     def __str__(self):

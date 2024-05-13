@@ -58,7 +58,9 @@ ROOT_URLCONF = 'wushu_tourney_reg.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR.joinpath('templates') # added this line to include the templates directory
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

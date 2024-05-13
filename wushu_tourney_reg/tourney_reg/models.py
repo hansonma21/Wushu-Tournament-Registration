@@ -159,6 +159,8 @@ class Registrant(models.Model):
         ]
     
     def save(self, *args, **kwargs):
+        if self.users.count() == 0:
+            raise ValidationError('There must be at least one user.')
         if not self.is_group and self.users.count() > 1:
             raise ValidationError('There must be only one user if it is not a group.')
         super().save(*args, **kwargs)

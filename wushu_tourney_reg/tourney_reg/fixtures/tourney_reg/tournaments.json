@@ -1,0 +1,15 @@
+[
+    {
+        "model": "tourney_reg.tournament",
+        "pk": 1,
+        "fields": {
+            "name": "6th Ohio International Chinese Martial Arts Tournament",
+            "start_date_time": "2024-08-03 09:00:00",
+            "end_date_time": "2024-08-03 18:00:00",
+            "location": "Mintonette Sports",
+            "registration_open": true,
+            "registration_start_date_time": "2024-04-30 00:00:00",
+            "registration_end_date_time": "2024-07-30 23:59:59"
+        }
+    }
+]

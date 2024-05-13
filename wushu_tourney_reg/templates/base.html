@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wushu Tournament Registration</title>
+    </head>
+    <body>
+        <header class="wrapper">
+            <h1>Wushu Tournament Registration</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'tourney_pages:home' %}">Home</a></li>
+                <li><a href="{% url 'tourney_profiles:signup' %}">Signup</a></li>
+                <li><a href="{% url 'tourney_profiles:login' %}">Login</a></li>
+                <li>
+                    <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+        <section>
+            {% block content %}
+            {% endblock %}
+        </section>
+        <footer>
+            <p>&copy; 2016 Wushu Tournament Registration</p>
+        </footer>
+</html>

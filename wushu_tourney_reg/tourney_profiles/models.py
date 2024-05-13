@@ -22,7 +22,7 @@ class Profile(models.Model):
     first_name = models.TextField() # e.g. John
     middle_name = models.TextField(null=True, blank=True) # e.g. Quincy (null because optional)
     last_name = models.TextField() # e.g. Doe
-    birth_date = models.DateField() # e.g. 2000-01-01
+    birth_date = models.DateField(null=True) # e.g. 2000-01-01
     sex = models.CharField(max_length=20, choices=Sexes.choices)
     skill_level = models.TextField(null=True, choices=SkillLevels.choices) # e.g. Beginner, Intermediate, Advanced (not decided yet, null because optional)
 

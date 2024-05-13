@@ -1,6 +1,8 @@
+{% extends 'base.html' %}
+
 {% block content %}
     <h1>Sign Up</h1>
-    <form class="site-form" action="/profile/signup" method="post">
+    <form class="site-form" action="{% url 'tourney_profiles:signup' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Sign Up</button>

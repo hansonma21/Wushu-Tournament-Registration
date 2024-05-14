@@ -1,8 +1,114 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block additional_header %}
+<!-- Prominent Section -->
+<style>
+    /* Add custom styles for the header background image */
+    #additional_header_header {
+        background-image: url("{% static 'tourney_pages/images/header-bg.jpg' %}"); /* Replace with your actual image path */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    /* Add overlay to the header background image */
+    #additional_header_content {
+        position: relative;
+        z-index: 1;
+    }
+
+    #additional_header_header::before {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.6;
+        background-color: #000;
+    }
+</style>
+<header id="additional_header_header" class="bg-blue-900 text-white py-16 sticky-nav">
+    <div id="additional_header_content" class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-4">6th Ohio International Chinese Martial Arts Tournament</h1>
+        <p class="text-3xl text-gray-300 mb-8">Hosted by Ohio Wushu Academy</p>
+        <div class="space-x-4">
+            <a href="{% url 'tourney_pages:learn_more' %}" class="text-xl bg-yellow-500 hover:bg-yellow-400 px-6 py-2 rounded-full transition duration-300 ease-in-out">Learn More</a>
+        <a href="{% url 'tourney_profiles:signup' %}" class="text-xl bg-green-500 hover:bg-green-400 px-6 py-2 rounded-full transition duration-300 ease-in-out">Sign Up</a>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+
 
 {% block content %}
+<section class="mb-8">
+    <h1 class="text-3xl font-semibold">Welcome to the 6th Ohio International Chinese Martial Arts Tournament</h1>
+    <p class="text-gray-600">Join us for an exciting event filled with skill, discipline, and camaraderie.</p>
+</section>
 
-    <h1>Wushu Tournament Registration</h1>
-    <p>Welcome to the Wushu Tournament Registration site. Here you can sign up for the tournament, view the schedule, and see the results.</p>
+<section class="mb-8">
+    <h2 class="text-xl font-semibold">Event Details</h2>
+    <p class="text-gray-600">Date: August 3, 2024</p>
+    <p class="text-gray-600">Location: Mintonette Sports Facility</p>
+    <p class="text-gray-600">Contact: ohiowushuacademy@gmail.com</p>
+</section>
 
+<!-- Instructions Section -->
+<section class="mb-12">
+    <h2 class="text-xl font-semibold mb-4">Instructions</h2>
+    <ol class="list-decimal pl-6">
+        <li>Create an account by clicking "Sign Up" in the navigation bar.</li>
+        <li>Fill out the registration form with your details.</li>
+        <li>Verify your account through the confirmation email.</li>
+        <li>Log in to register for specific events.</li>
+        <li>Browse events, select one, and complete the registration process.</li>
+        <li>Arrive at the tournament venue on the scheduled day.</li>
+    </ol>
+</section>
+
+<!-- News Section -->
+<section class="mb-12">
+    <h2 class="text-xl font-semibold mb-4">Latest News</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Important Update: Schedule Changes</h3>
+            <p class="text-gray-600">Due to unforeseen circumstances, the tournament schedule has been adjusted. Please check the updated event timings.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">New Registration Deadline</h3>
+            <p class="text-gray-600">The registration deadline for all events has been extended to October 10. Don't miss out!</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold">Safety Measures</h3>
+            <p class="text-gray-600">We are committed to ensuring a safe tournament environment. Please review our COVID-19 safety guidelines.</p>
+        </div>
+    </div>
+    <p class="mt-4 text-center">
+        <a href="#" class="text-blue-500 hover:underline">View All Updates</a>
+    </p>
+</section>
+
+<section>
+    <h2 class="text-xl font-semibold mb-4">Photo Gallery</h2>
+    <div class="grid grid-cols-2 gap-4">
+        <div class="rounded-lg overflow-hidden">
+            <img src="{% static 'tourney_pages/images/venue.jpg' %}" alt="Tournament Venue" class="w-full h-auto">
+        </div>
+        <div class="rounded-lg overflow-hidden">
+            <img src="{% static 'tourney_pages/images/in-action.jpg' %}" alt="Participants in Action" class="w-full h-auto">
+        </div>
+        <div class="rounded-lg overflow-hidden">
+            <img src="{% static 'tourney_pages/images/trophies.jpg' %}" alt="Trophies" class="w-full h-auto">
+        </div>
+        <div class="rounded-lg overflow-hidden">
+            <img src="{% static 'tourney_pages/images/flyer.png' %}" alt="Flyer" class="w-full h-auto">
+        </div>
+        <!-- Add more images here -->
+    </div>
+</section>
 {% endblock %}

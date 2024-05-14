@@ -5,4 +5,5 @@ app_name = 'tourney_pages'
 
 urlpatterns = [
     path('', views.index, name='home'),
+    path('learn_more/', views.learn_more_view, name='learn_more'),
 ]

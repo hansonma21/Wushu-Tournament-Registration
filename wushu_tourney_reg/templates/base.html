@@ -1,30 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Wushu Tournament Registration</title>
-    </head>
-    <body>
-        <header class="wrapper">
-            <h1>Wushu Tournament Registration</h1>
-        </header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'tourney_pages:home' %}">Home</a></li>
-                <li><a href="{% url 'tourney_profiles:signup' %}">Signup</a></li>
-                <li><a href="{% url 'tourney_profiles:login' %}">Login</a></li>
-                <li>
-                    <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">Logout</button>
-                    </form>
-                </li>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohio Wushu</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'tourney_pages/images/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        /* Add custom styles for sticky navigation */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    
+    <header class="bg-blue-600 text-white py-4 sticky-nav">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'tourney_pages:home' %}" class="text-xl font-semibold">Ohio Wushu</a>
+            <ul class="flex space-x-4">
+                <li><a href="{% url 'tourney_pages:home' %}" class="hover:underline">Home</a></li>
+                <li><a href="{% url 'tourney_pages:learn_more' %}" class="hover:underline">Learn More</a></li>
+                <li><a href="#" class="hover:underline">Event Registration</a></li>
+                <li><a href="#" class="hover:underline">News</a></li>
+                <li><a href="{% url 'tourney_profiles:signup' %}" class="hover:underline">Sign Up</a></li>
+                <li><a href="{% url 'tourney_profiles:login' %}" class="hover:underline">Log In</a></li>
+                <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="hover:underline" type="submit">Log Out</button>
+                </form>
             </ul>
         </nav>
-        <section>
-            {% block content %}
-            {% endblock %}
-        </section>
-        <footer>
-            <p>&copy; 2016 Wushu Tournament Registration</p>
-        </footer>
+    </header>
+
+    {% block additional_header %}
+    {% endblock %}
+    
+
+    <main class="container mx-auto py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-200 text-gray-600 py-4">
+        <p class="text-center">© 2024 Hanson Ma. All rights reserved.</p>
+    </footer>
+</body>
 </html>

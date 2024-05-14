@@ -77,8 +77,8 @@ class RegistrationAdmin(admin.ModelAdmin):
 class RegistrantAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['group_name', 'users']}),
-        ('Status', {'fields': ['is_active']}),
-        ('Additional Information', {'fields': ['notes', 'created_date_time']})
+        ('Status', {'fields': ['is_group', 'is_kungfu_team_competitor', ]}),
+        ('Additional Information', {'fields': ['school_or_club']})
     ]
 
     list_display = ['tournament', 'is_group', 'registrant_name', 'school_or_club', 'is_kungfu_team_competitor']

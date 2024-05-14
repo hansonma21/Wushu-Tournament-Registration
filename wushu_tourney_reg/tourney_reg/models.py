@@ -97,7 +97,7 @@ class Event(models.Model):
         ]
     
     def __str__(self):
-        return f"{self.english_name} ({self.chinese_name}), {self.skill_level}, {self.age_group}, {self.skill_level}"
+        return f"{self.english_name} ({self.chinese_name}), {self.skill_level}, {self.age_group}, {self.skill_level}, {self.sex}"
 
 
 class TournamentEvent(models.Model):
@@ -107,7 +107,7 @@ class TournamentEvent(models.Model):
     judges = models.ManyToManyField(Profile, limit_choices_to={'is_judge': True}, blank=True) # could be a list of judges for this event
     # can access registrations for this tournament event by accessing the Registrations that have this tournament_event
 
-    order = models.IntegerField(validators=[MinValueValidator(1)]) # e.g. 1 (the order in which the event is held in the tournament)
+    order = models.IntegerField(validators=[MinValueValidator(1)], null=True, blank=True) # e.g. 1 (the order in which the event is held in the tournament)
     mat_or_location = models.TextField() # e.g. Mat 1, Mat 2, etc.
     max_participants = models.IntegerField(validators=[MinValueValidator(1)], default=999) # e.g. 50
 
@@ -157,13 +157,6 @@ class Registrant(models.Model):
             models.CheckConstraint(check=models.Q(group_name__isnull=False) | models.Q(is_group=False), name='group_name_not_null_if_group', violation_error_message='The group name must not be null if it is a group.'),
             models.CheckConstraint(check=models.Q(group_name__isnull=True) | models.Q(is_group=True), name='group_name_null_if_not_group', violation_error_message='The group name must be null if it is not a group.'),
         ]
-    
-    def save(self, *args, **kwargs):
-        if self.users.count() == 0:
-            raise ValidationError('There must be at least one user.')
-        if not self.is_group and self.users.count() > 1:
-            raise ValidationError('There must be only one user if it is not a group.')
-        super().save(*args, **kwargs)
     
     def __str__(self):
         if self.is_group:

@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tourney_pages.middleware.AdminAccessMiddleware', # added this line to include the middleware for restricting access to the admin site
 ]
 
 ROOT_URLCONF = 'wushu_tourney_reg.urls'

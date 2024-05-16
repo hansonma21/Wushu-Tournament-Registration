@@ -14,6 +14,14 @@
             top: 0;
             z-index: 1000;
         }
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            padding: 10px 10px 0px 10px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -24,14 +32,18 @@
             <ul class="flex space-x-4">
                 <li><a href="{% url 'tourney_pages:home' %}" class="hover:underline">Home</a></li>
                 <li><a href="{% url 'tourney_pages:learn_more' %}" class="hover:underline">Learn More</a></li>
-                <li><a href="#" class="hover:underline">Event Registration</a></li>
+                <li><a href="{% url 'tourney_reg:registration' %}" class="hover:underline">Event Registration</a></li>
                 <li><a href="#" class="hover:underline">News</a></li>
-                <li><a href="{% url 'tourney_profiles:signup' %}" class="hover:underline">Sign Up</a></li>
-                <li><a href="{% url 'tourney_profiles:login' %}" class="hover:underline">Log In</a></li>
-                <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
-                    {% csrf_token %}
-                    <button class="hover:underline" type="submit">Log Out</button>
-                </form>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'tourney_profiles:profile' %}" class="hover:underline">Profile</a></li>
+                    <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
+                        {% csrf_token %}
+                        <button class="hover:underline" type="submit">Log Out</button>
+                    </form>
+                {% else %}
+                    <li><a href="{% url 'tourney_profiles:signup' %}" class="hover:underline">Sign Up</a></li>
+                    <li><a href="{% url 'tourney_profiles:login' %}" class="hover:underline">Log In</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
@@ -45,7 +57,7 @@
         {% endblock %}
     </main>
 
-    <footer class="bg-gray-200 text-gray-600 py-4">
+    <footer id="footer" class="bg-gray-200 text-gray-600 py-4">
         <p class="text-center">© 2024 Hanson Ma. All rights reserved.</p>
     </footer>
 </body>

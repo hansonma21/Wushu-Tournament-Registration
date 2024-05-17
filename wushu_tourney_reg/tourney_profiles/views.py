@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
+from .forms import CustomProfileCreationForm
 
 # Create your views here.
 def signup_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomProfileCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save() # returned the newly created user
             # log the user in
@@ -15,7 +16,7 @@ def signup_view(request):
             # then redirect to home page
             return redirect('tourney_pages:home')
     else:
-        form = UserCreationForm()
+        form = CustomProfileCreationForm()
     
     context = {'form': form}
     return render(request, 'tourney_profiles/signup.html', context)

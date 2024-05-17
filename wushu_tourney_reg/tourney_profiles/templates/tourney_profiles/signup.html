@@ -1,10 +1,157 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="text-2xl font-bold mb-4">Sign Up</h1>
-    <form class="site-form" action="{% url 'tourney_profiles:signup' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Up</button>
-    </form>
+    <style>
+        .form-label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .required-field::after {
+            content:" *";
+            color: red;
+        }
+        input, select {
+            border: 1px solid #ccc;
+            padding-right: 5px;
+            padding-left: 5px;
+            width: calc(100% - 160px); /* Subtract label width and padding */
+        }
+    </style>
+    <div class="flex justify-center">
+        <form class="site-form border-2 border-gray-300 p-4 text-left" action="{% url 'tourney_profiles:signup' %}" method="post">
+            {% csrf_token %}
+            <h1 class="text-2xl font-bold mb-4">Sign Up</h1>
+            <div class="grid gap-4">
+                <div class="flex justify-between">
+                    <label for="username" class="block font-bold mb-2 form-label required-field">Username</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.username.errors.as_text }}</span>
+                        {% endif %}
+                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ form.username.help_text }}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="email" class="block font-bold mb-2 form-label required-field">Email</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.email.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <label for="password1" class="block font-bold mb-2 form-label required-field">Password</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.password1.errors.as_text }}</span>
+                        {% endif %}
+                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ form.password1.help_text }}</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <label for="password2" class="block font-bold mb-2 form-label required-field">Confirm Password</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.password2.errors.as_text }}</span>
+                        {% endif %}
+                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ form.password2.help_text }}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="first_name" class="block font-bold mb-2 form-label required-field">First Name</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.first_name.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="middle_name" class="block font-bold mb-2 form-label">Middle Name</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.middle_name }}
+                        {% if form.middle_name.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.middle_name.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="last_name" class="block font-bold mb-2 form-label required-field">Last Name</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.last_name.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="birth_date" class="block font-bold mb-2 form-label required-field">Birth Date</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.birth_date }}
+                        {% if form.birth_date.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.birth_date.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="sex" class="block font-bold mb-2 form-label required-field">Sex</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.sex }}
+                        {% if form.sex.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="skill_level" class="block font-bold mb-2 form-label required-field">Skill Level</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.skill_level }}
+                        {% if form.skill_level.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.skill_level.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="school_or_club" class="block font-bold mb-2 form-label">School or Club</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.school_or_club }}
+                        {% if form.school_or_club.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.school_or_club.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <label for="usawkf_id" class="block font-bold mb-2 form-label">USAWKF ID</label>
+                    <div style="flex-grow: 1;">
+                        {{ form.usawkf_id }}
+                        {% if form.usawkf_id.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.usawkf_id.errors.as_text }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            <p class="text-sm text-red-500 mb-4">Fields marked with an asterisk (*) are required.</p>
+            <div class="flex justify-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Sign Up</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

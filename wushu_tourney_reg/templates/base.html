@@ -33,7 +33,7 @@
                 <li><a href="{% url 'tourney_pages:home' %}" class="hover:underline">Home</a></li>
                 <li><a href="{% url 'tourney_pages:learn_more' %}" class="hover:underline">Learn More</a></li>
                 <li><a href="{% url 'tourney_reg:registration' %}" class="hover:underline">Event Registration</a></li>
-                <li><a href="#" class="hover:underline">News</a></li>
+                <li><a href="{% url 'tourney_pages:news' %}" class="hover:underline">News</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'tourney_profiles:profile' %}" class="hover:underline">Profile</a></li>
                     <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">

@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     <h1 class="text-4xl font-bold">Profile</h1>
-    <p class="text-lg">Welcome, {{ user.username }}!</p>
-    <p class="text-lg">Email: {{ user.email }}</p>
-    <p class="text-lg">First Name: {{ user.first_name }}</p>
-    <p class="text-lg">Last Name: {{ user.last_name }}</p>
+    <div class="flex">
+        <div class="mr-4">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="User Avatar" class="w-16 h-16 rounded-full">
+            {% else %}
+                <img src="{% static 'tourney_profiles/images/default-avatar.png' %}" alt="Default Avatar" class="w-16 h-16 rounded-full">
+            {% endif %}
+        </div>
+        <div>
+            <p class="text-lg">Welcome, {{ user.username }}!</p>
+            <p class="text-lg">Email: {{ user.email }}</p>
+            <p class="text-lg">First Name: {{ user.first_name }}</p>
+            <p class="text-lg">Last Name: {{ user.last_name }}</p>
+        </div>
+    </div>
 {% endblock %}

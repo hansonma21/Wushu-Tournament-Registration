@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3 class="text-2xl font-bold">Competitor Scoring</h3>
+    <p>Welcome to the Competitor Scoring dashboard. Here you can view the latest news and updates, as well as access the scoring system for the tournament events.</p>
+    
+    <p>{{tournament_event.event.english_name}}</p>
+    {% if competitor %}
+        <h2 class="text-2xl font-bold">{{competitor.registrant.get_registrant_name}}</h2>
+
+        {% if messages %}
+        <header id="additional_header_messages" class="bg-blue-500 text-white py-4">
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }} text-center"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </header>
+        {% endif %}
+
+        <ul>
+            <li>
+                Order: {{competitor.order}}
+            </li>
+            <li>
+                Is a group?: {{competitor.registrant.is_group}}
+            </li>
+            <li>
+                School/Club Name: {{competitor.registrant.school_or_club}}
+            </li>
+            <li>
+                KungFu Team Competitor?: {{competitor.registrant.is_kungfu_team_competitor}}
+            </li>
+        </ul>
+
+        {% if judge_form %}
+            <!-- line break -->
+            <br>
+            <h3 class="text-2lg font-bold">Judge Score</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ judge_form.as_p }}
+                <input type="hidden" name="form_type" value="judge_form">
+                <button type="submit">Submit Personal Score</button>
+            </form>
+        {% else %}
+            <p>No  available judging form at this time.</p>
+        {% endif %}
+        
+        {% if is_head_judge %}
+            {% if final_form %}
+                <br>
+                <h3 class="text-2lg font-bold">Final Score</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ final_form.as_p }}
+                    <input type="hidden" name="form_type" value="final_form">
+                    <button type="submit">Submit Final Score</button>
+                </form>
+            {% endif %}
+            {% if final_form.errors %}
+                <p>There was an error submitting the final form. Please try again.</p>
+            {% endif %}
+
+            {% if other_judges_scores %}
+                <br>
+                <h3 class="text-2lg font-bold">Other Judges' Scores</h3>
+                <ul>
+                    {% for judge_score in other_judges_scores %}
+                        <li>
+                            <p>Judge: {{judge_score.judge.first_name}} {{judge_score.judge.last_name}}</p>
+                            <p>Score: {{judge_score.judge_score}}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No other judges' scores available at this time.</p>
+            {% endif %}
+        {% endif %}
+
+    {% else %}
+        <p>No information available at this time.</p>
+    {% endif %}
+{% endblock %}

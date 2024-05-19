@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h3 class="text-xl font-bold">Event Dashboard</h3>
+    <p>Welcome to the Event dashboard. Here you can view the latest news and updates, as well as access the scoring system for the tournament events.</p>
+    <p>{{tournament_event.event.english_name}}</p>
+
+    {% if tournament_event %}
+        {% if competitors %}
+            <h3 class="text-xl font-bold">Competitors</h3>
+            <p>View the list of competitors and access the scoring system for each competitor.</p>
+            <ol>
+                {% for competitor in competitors %}
+                    {% if competitor.order %}
+                    <li>
+                        <a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=competitor.order %}" class="text-blue-500 hover:underline">{{competitor.registrant.get_registrant_name}}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No competitors available at this time.</p>
+        {% endif %}
+
+    {% else %}
+        <p>No tournament events available at this time.</p>
+    {% endif %}
+
+{% endblock %}

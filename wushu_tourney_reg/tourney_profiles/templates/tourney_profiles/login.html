@@ -1,10 +1,65 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="text-3xl font-bold mb-4">Log in</h1>
-    <form class="site-form" action="{% url 'tourney_profiles:login' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Log in</button>
-    </form>
+    <style>
+        .form-label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .required-field::after {
+            content:" *";
+            color: red;
+        }
+        input, select {
+            border: 1px solid #ccc;
+            padding-right: 5px;
+            padding-left: 5px;
+            width: calc(100% - 25px); /* Subtract label width and padding */
+        }
+    </style>
+    <div class="flex justify-center">
+        <form class="site-form border-2 border-gray-300 p-4 text-left" action="{% url 'tourney_profiles:login' %}" method="post">
+            {% csrf_token %}
+            <h1 class="text-2xl font-bold mb-4">Log In</h1>
+            <div class="grid gap-4">
+                <div class="flex justify-between">
+                    <label for="username" class="block font-bold mb-2 form-label">Username</label>
+                    <div>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.username.errors.as_text }}</span>
+                        {% endif %}
+                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ form.username.help_text }}</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <label for="password" class="block font-bold mb-2 form-label">Password</label>
+                    <div>
+                        {{ form.password }}
+                        {% if form.password.errors %}
+                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ form.password.errors.as_text }}</span>
+                        {% endif %}
+                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ form.password.help_text }}</span>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="text-red-500 error-message">{{ form.non_field_errors }}</div>
+                {% endif %}
+            
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+            
+            <div class="flex justify-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Log in</button>
+            </div>
+
+            <div class="flex justify-center mt-4">
+                <p>Don't have an account? <a href="{% url 'tourney_profiles:signup' %}" class="text-blue-500 hover:text-blue-700">Sign up here</a></p>
+            </div>
+        </form>
+    </div>
 {% endblock %}

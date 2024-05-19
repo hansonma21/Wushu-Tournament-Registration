@@ -36,6 +36,9 @@
                 <li><a href="{% url 'tourney_pages:news' %}" class="hover:underline">News</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'tourney_profiles:profile' %}" class="hover:underline">Profile</a></li>
+                    {% if user.profile.is_judge %}
+                        <li><a href="{% url 'tourney_scoring:dashboard' %}" class="hover:underline">Judging Dashboard</a></li>
+                    {% endif %}
                     <form class="logout-link" action="{% url 'tourney_profiles:logout' %}" method="post">
                         {% csrf_token %}
                         <button class="hover:underline" type="submit">Log Out</button>

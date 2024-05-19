@@ -196,6 +196,8 @@ class Registration(models.Model):
     tournament_event = models.ForeignKey(TournamentEvent, on_delete=models.CASCADE)
     registrant = models.ForeignKey(Registrant, on_delete=models.CASCADE) # could be a group or individual
 
+    order = models.IntegerField(validators=[MinValueValidator(1)], null=True, blank=True) # e.g. 1 (the order in which the registrant is registered in the tournament event)
+
     notes = models.TextField(null=True, blank=True) # e.g. Will pay at the door (null if no notes)
     registered_date_time = models.DateTimeField(default=timezone.now) # e.g. 2024-07-01 12:00:00
 
@@ -210,6 +212,8 @@ class Registration(models.Model):
 
         constraints = [
             models.UniqueConstraint(fields=['tournament_event', 'registrant'], name='unique_registration', violation_error_message='This registrant is already registered for this event.'),
+            models.CheckConstraint(check=models.Q(order__gte=1), name='registration_order_non_negative', violation_error_message='The order must be non-negative.'),
+            models.UniqueConstraint(fields=['tournament_event', 'order'], name='unique_registration_order', violation_error_message='This order already exists.'),
         ]
     
     def save(self, *args, **kwargs):

@@ -55,21 +55,21 @@ class TournamentEventAdmin(admin.ModelAdmin):
         ('Status', {'fields': ['registration_open', 'is_active', 'is_locked']}),
     ]
 
-    list_display = ['tournament', 'event', 'mat_or_location', 'registration_open', 'is_active', 'is_locked']
+    list_display = ['tournament', 'event', 'mat_or_location', 'order', 'registration_open', 'is_active', 'is_locked']
     list_filter = ['tournament', 'event', 'mat_or_location', 'is_active', 'is_locked']
-    search_fields = ['tournament', 'event', 'mat_or_location']
+    search_fields = ['tournament__name', 'event__english_name', 'mat_or_location']
     filter_horizontal = ('judges',)
 
 class RegistrationAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['registrant', 'tournament_event']}),
+        (None, {'fields': ['registrant', 'tournament_event', 'order']}),
         ('Status', {'fields': ['is_paid', 'is_withdrawn', 'is_checked_in', 'is_disqualified', 'is_completed']}),
         ('Additional Information', {'fields': ['notes', 'registered_date_time']})
     ]
 
-    list_display = ['tournament_event', 'registrant_name', 'registered_date_time', 'is_paid', 'is_withdrawn', 'is_checked_in', 'is_disqualified', 'is_completed']
+    list_display = ['tournament_event', 'order', 'registrant_name', 'registered_date_time', 'is_paid', 'is_withdrawn', 'is_checked_in', 'is_disqualified', 'is_completed']
     list_filter = ['tournament_event__tournament', 'tournament_event__event', 'is_paid', 'is_withdrawn', 'is_checked_in', 'is_disqualified', 'is_completed']
-    search_fields = ['tournament_event__tournament', 'tournament_event__event', 'registrant__group_name', 'registrant__users__first_name', 'registrant__users__last_name', 'registrant__users__email']
+    search_fields = ['tournament_event__tournament__name', 'tournament_event__event__english_name', 'registrant__group_name', 'registrant__users__first_name', 'registrant__users__last_name', 'registrant__users__email']
 
     def registrant_name(self, obj):
         return obj.registrant.get_registrant_name()

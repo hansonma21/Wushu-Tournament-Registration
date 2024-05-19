@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Tournament Dashboard</h1>
+    <p>Welcome to the Tournament dashboard. Here you can view the latest news and updates, as well as access the scoring system for the tournament events.</p>
+    <p>{{tournament.name}}</p>
+
+    {% if mat_or_locations %}
+        <h2 class="text-2xl font-bold">Tournament Events</h2>
+        <p>View the list of tournament events and access the scoring system for each event.</p>
+
+        {% for mat_or_location, tournament_events in mat_or_locations.items %}
+            <h2>{{mat_or_location}}</h2>
+            <ol>
+                {% for tournament_event in tournament_events %}
+                    <li>
+                        <a href="{% url 'tourney_scoring:tournament_event_dashboard' tournament_id=tournament.id tournament_event_id=tournament_event.id %}" class="text-blue-500 hover:underline">{{tournament_event.event.english_name}} ({{tournament_event.event.age_group}})</a>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endfor %}
+
+    {% else %}
+        <p>No tournament events available at this time.</p>
+    {% endif %}
+
+{% endblock %}

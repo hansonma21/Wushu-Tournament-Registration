@@ -1,13 +1,15 @@
 from django.db import models
 
 from tourney_reg.models import Registration, Profile, TournamentEvent
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
 class FinalScore(models.Model):
-    """A scoring for a registrant's performance in a tournament event; belongs to a singular Registration; has Justifications"""
+    """A scoring for a registrant's performance in a tournament event; belongs to a singular Registration; has Justifications; has a Head Judge"""
     registration = models.OneToOneField(Registration, on_delete=models.CASCADE)
+    head_judge = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='head_judge', null=True, blank=True, limit_choices_to={'is_judge': True}) # head judge dictates the final score and rank
 
-    final_score = models.FloatField(null=True, blank=True) # e.g. 9.5
+    final_score = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(10)]) # e.g. 9.5
     final_rank = models.IntegerField(null=True, blank=True) # e.g. 1, probably start off as null
 
     class Meta:
@@ -25,9 +27,9 @@ class FinalScore(models.Model):
 class JudgeScore(models.Model):
     """A justification for a scoring; belongs to a singular Scoring"""
     final_score = models.ForeignKey(FinalScore, on_delete=models.CASCADE)
-    judge = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    judge = models.ForeignKey(Profile, on_delete=models.CASCADE, limit_choices_to={'is_judge': True})
 
-    judge_score = models.FloatField() # individual judge's score, e.g. 9.5
+    judge_score = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(10)]) # individual judge's score, e.g. 8.5
     justification = models.TextField(null=True, blank=True) # e.g. The competitor did not perform the required number of kicks
 
     class Meta:

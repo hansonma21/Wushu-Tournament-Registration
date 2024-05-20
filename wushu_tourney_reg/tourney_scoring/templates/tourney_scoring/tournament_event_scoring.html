@@ -24,6 +24,7 @@
 Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.registrant.get_registrant_name}}</span>. As judges, here you can view the latest updates, as well as access the scoring system for the athletes of this event.
 {% endblock %}
 
+{% comment %} General Info Div {% endcomment %}
 {% block dashboard_content %}
 <div class="bg-white p-4 rounded-lg shadow-md mt-4">
     <h2 class="text-2xl font-semibold">Competitor's General Information</h2>
@@ -43,6 +44,7 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
     </ul>
 </div>
 
+{% comment %} Scoring Div {% endcomment %}
 <div class="bg-gray-300 p-4 rounded-lg shadow-md mt-4">
     <h2 class="text-2xl font-semibold">Scoring</h2>
     <div class="flex flex-wrap">
@@ -121,6 +123,8 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
         </div>
     </div>
 </div>
+
+{% comment %} add previous/next competitor buttons here {% endcomment %}
 
 {% endblock %}
 

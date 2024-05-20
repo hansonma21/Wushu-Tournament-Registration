@@ -5,6 +5,7 @@ from tourney_scoring.models import FinalScore, JudgeScore
 from .forms import FinalScoreForm, JudgeScoreForm
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
+from django.db.models import Q
 
 # Create your views here.
 def judge_required(view_func):
@@ -22,7 +23,7 @@ def judge_required(view_func):
 @judge_required
 def main_dashboard_view(request):
     tournaments = Tournament.objects.filter(is_active=True)
-    return render(request, 'tourney_scoring/dashboard.html', {'tournaments': tournaments})
+    return render(request, 'tourney_scoring/judging_dashboard.html', {'tournaments': tournaments})
 
 @judge_required
 def tournament_dashboard_view(request, tournament_id):
@@ -39,7 +40,7 @@ def tournament_dashboard_view(request, tournament_id):
 def tournament_event_dashboard_view(request, tournament_id, tournament_event_id):
     tournament = get_object_or_404(Tournament, pk=tournament_id)
     tournament_event = get_object_or_404(TournamentEvent, pk=tournament_event_id)
-    competitors = Registration.objects.filter(tournament_event=tournament_event).order_by('order')
+    competitors = Registration.objects.filter(tournament_event=tournament_event).exclude(Q(finalscore__isnull=True) | Q(order__isnull=True)).order_by('order')
     if tournament_event.tournament != tournament:
         # invalid link error
         raise PermissionDenied

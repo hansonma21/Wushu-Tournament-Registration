@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        .dashboard-sticky-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding-left: 1%;
+            padding-right: 1%;
+        }
+    </style>
+
+    <section>
+        <header class="bg-blue-500 text-white py-4 dashboard-sticky-nav rounded-lg">
+            <nav class="container mx-auto flex justify-between items-center">
+                <a href="{% url 'tourney_scoring:dashboard' %}" class="text-xl font-semibold">Judging Navigation</a>
+                <ul class="flex space-x-4">
+                    <li><a href="{% url 'tourney_scoring:dashboard' %}" class="hover:underline">All Tournaments</a></li>
+                    {% block dashboard_navigation_links %}
+
+                    {% endblock %}             
+                </ul>
+            </nav>
+        </header>
+    </section>
+
+    <section class="mb-2">
+        <div class="justify-center rounded-lg shadow-md bg-gray-300 p-4">
+            <h3 class="text-4xl font-bold text-center">{% block dashboard_header_title %} {% endblock %}</h3>
+        </div>
+    </section>
+
+    <section class="mb-2">
+        {% block additional_dashboard_header %} {% endblock %}
+    </section>
+
+    <section class="mb-8">
+        <h1 class="text-2xl font-semibold text-gray-600">{% block dashboard_info %} {% endblock %}</h1>
+    </section>
+
+    <section class="mb-8">
+    {% block dashboard_content %}
+
+    {% endblock %}
+    </section>
+
+{% endblock %}

@@ -1,27 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'tourney_scoring/dashboard_base.html' %}
 
-{% block content %}
-    <h1>Tournament Dashboard</h1>
-    <p>Welcome to the Tournament dashboard. Here you can view the latest news and updates, as well as access the scoring system for the tournament events.</p>
-    <p>{{tournament.name}}</p>
 
-    {% if mat_or_locations %}
-        <h2 class="text-2xl font-bold">Tournament Events</h2>
-        <p>View the list of tournament events and access the scoring system for each event.</p>
+{% block dashboard_header_title %} {{tournament.name}} Dashboard {% endblock %}
 
-        {% for mat_or_location, tournament_events in mat_or_locations.items %}
-            <h2>{{mat_or_location}}</h2>
-            <ol>
-                {% for tournament_event in tournament_events %}
-                    <li>
-                        <a href="{% url 'tourney_scoring:tournament_event_dashboard' tournament_id=tournament.id tournament_event_id=tournament_event.id %}" class="text-blue-500 hover:underline">{{tournament_event.event.english_name}} ({{tournament_event.event.age_group}})</a>
-                    </li>
-                {% endfor %}
-            </ol>
-        {% endfor %}
+{% block dashboard_info %}
+Welcome to the dashboard for the <span class="text-green-600">{{tournament.name}}</span>. As judges, here you can view the latest news and updates, as well as access the scoring system for its events.
+{% endblock %}
 
-    {% else %}
-        <p>No tournament events available at this time.</p>
-    {% endif %}
+{% block dashboard_content %}
+<h2 class="text-2xl font-semibold">Events</h2>
 
+<div class="flex flex-wrap">
+    <div class="w-1/2 p-4">
+        {% if not mat_or_locations %}
+            <p>No events available at this time.</p>
+        {% else %}
+            {% for mat_or_location, tournament_events in mat_or_locations.items %}
+                <div class="bg-white p-4 rounded-lg shadow-md mt-4">
+                    <h3 class="text-xl font-semibold">Location: {{mat_or_location}}</h3>
+                    <ol class="list-decimal list-inside">
+                        {% for tournament_event in tournament_events %}
+                            <li>
+                                <a href="{% url 'tourney_scoring:tournament_event_dashboard' tournament_id=tournament.id tournament_event_id=tournament_event.id %}" class="text-blue-500 hover:underline">{{tournament_event.event.english_name}} ({{tournament_event.event.age_group}}) - {{tournament_event.event.skill_level|title}}</a>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+
+            {% endfor %}
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

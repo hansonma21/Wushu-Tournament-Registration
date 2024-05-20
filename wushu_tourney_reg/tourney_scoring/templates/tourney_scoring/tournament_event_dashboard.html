@@ -1,29 +1,59 @@
-{% extends 'base.html' %}
+{% extends 'tourney_scoring/dashboard_base.html' %}
 
-{% block content %}
-    <h3 class="text-xl font-bold">Event Dashboard</h3>
-    <p>Welcome to the Event dashboard. Here you can view the latest news and updates, as well as access the scoring system for the tournament events.</p>
-    <p>{{tournament_event.event.english_name}}</p>
+{% block dashboard_navigation_links %}
+<li><a href="{% url 'tourney_scoring:tournament_dashboard' tournament_id=tournament_event.tournament.id %}" class="hover:underline">Go Back to All Events</a></li>
+{% endblock %}    
 
-    {% if tournament_event %}
-        {% if competitors %}
-            <h3 class="text-xl font-bold">Competitors</h3>
-            <p>View the list of competitors and access the scoring system for each competitor.</p>
-            <ol>
+{% block dashboard_header_title %} {{tournament_event.event.english_name}}, ({{tournament_event.event.age_group}}), {{tournament_event.event.skill_level|title}} Event Dashboard {% endblock %}
+
+{% block additional_dashboard_header %}
+<div class="text-center">
+    <h2 class="text-2lg font-semibold text-green-600">{{ tournament_event.tournament.name }}</h2>
+</div>
+{% endblock %}
+
+{% block dashboard_info %}
+Welcome to the dashboard for the <span class="text-yellow-700">{{tournament_event.event.english_name}}, ({{tournament_event.event.age_group}}), {{tournament_event.event.skill_level|title}}</span> event. As judges, here you can view the latest news and updates, as well as access the scoring system for the athletes of this event.
+{% endblock %}
+
+{% block dashboard_content %}
+<h2 class="text-2xl font-semibold">Competitors</h2>
+
+<div class="flex flex-wrap">
+    <div class="w-1/2 p-4">
+        {% if not tournament_event %}
+            <p>This info for this event is unavailable at this time</p>
+        {% else %}
+            {% if not competitors %}
+                <p>No competitors available at this time.</p>
+            {% else %}
                 {% for competitor in competitors %}
                     {% if competitor.order %}
-                    <li>
-                        <a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=competitor.order %}" class="text-blue-500 hover:underline">{{competitor.registrant.get_registrant_name}}</a>
-                    </li>
+                        <div class="bg-white p-4 rounded-lg shadow-md mt-4">
+                            <h3 class="text-xl font-semibold underline"><a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=competitor.order %}" class="hover:text-blue-500">{{competitor.registrant.get_registrant_name}}</a></h3>
+                            <ul class="text-gray-600">
+                                <li>
+                                    Order: {{competitor.order}}
+                                </li>
+                                <li>
+                                    Is a group?: {% if competitor.registrant.is_group %} Yes {% else %} No {% endif %}
+                                </li>
+                                <li>
+                                    School/Club Name: {% if competitor.registrant.school_or_club %} {{competitor.registrant.school_or_club}} {% else %} N/A {% endif %}
+                                </li>
+                                <li>
+                                    Is KungFu Team Competitor?: {% if competitor.registrant.is_kungfu_team_competitor %} Yes {% else %} No {% endif %}
+                                </li>
+                            </ul>
+                                <a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=competitor.order %}" class="text-blue-500 hover:underline">Go to this competitor</a>
+                        </div>
                     {% endif %}
+
                 {% endfor %}
-            </ol>
-        {% else %}
-            <p>No competitors available at this time.</p>
+            {% endif %}
+
         {% endif %}
 
-    {% else %}
-        <p>No tournament events available at this time.</p>
-    {% endif %}
-
+    </div>
+</div>
 {% endblock %}

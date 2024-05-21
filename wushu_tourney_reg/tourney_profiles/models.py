@@ -31,7 +31,7 @@ class Profile(models.Model):
 
     school_or_club = models.TextField(null=True, blank=True) # e.g. Ohio Wushu Academy (null because optional)
 
-    usawkf_id = models.TextField(blank=True, null=True, unique=True) # e.g. 123456 (null because optional)
+    usawkf_id = models.TextField(blank=True, null=True) # e.g. 123456 (null because optional)
 
     is_judge = models.BooleanField(default=False) # e.g. True (True if judge, False if not)
 
@@ -41,6 +41,7 @@ class Profile(models.Model):
         # Ensure that the email and usawkf_id are unique
         constraints = [
             models.UniqueConstraint(fields=['email'], name='unique_email', violation_error_message='This email is already in use.'),
+            models.UniqueConstraint(fields=['usawkf_id'], name='unique_usawkf_id', violation_error_message='This USAWKF ID is already in use.')
         ]
 
     def __str__(self):

@@ -116,7 +116,7 @@ class TournamentEvent(models.Model):
     is_locked = models.BooleanField(default=False) # e.g. False
 
     class Meta:
-        ordering = ['tournament', 'event', 'order']
+        ordering = ['tournament', 'mat_or_location', 'event', 'order']
 
         # Ensure that the order is non-negative and greater than or equal to 1,
         # that the max_participants is non-negative and greater than or equal to 1,

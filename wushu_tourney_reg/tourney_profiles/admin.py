@@ -11,7 +11,7 @@ class ProfileInline(admin.StackedInline):
     verbose_name_plural = 'Profile'
     fk_name = 'user'
     fields = ('first_name', 'middle_name', 'last_name', 'email', 'phone_number', 'birth_date', 'sex', 'skill_level', 
-              'school_or_club', 'is_judge')
+              'school_or_club', 'usawkf_id', 'is_judge')
 
 class ProfileAdmin(UserAdmin):
     inlines = [ProfileInline, ]

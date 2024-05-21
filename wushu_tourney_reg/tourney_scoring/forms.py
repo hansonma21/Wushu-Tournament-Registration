@@ -4,7 +4,7 @@ from .models import FinalScore, JudgeScore
 class FinalScoreForm(ModelForm):
     class Meta:
         model = FinalScore
-        fields = ['final_score', 'final_rank']
+        fields = ['final_score', 'final_rank', 'final_justification']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

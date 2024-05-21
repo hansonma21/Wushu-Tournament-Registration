@@ -11,6 +11,7 @@ class FinalScore(models.Model):
 
     final_score = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(10)]) # e.g. 9.5
     final_rank = models.IntegerField(null=True, blank=True) # e.g. 1, probably start off as null
+    final_justification = models.TextField(null=True, blank=True) # e.g. Not considering lowest and highest scores
 
     class Meta:
         ordering = ['registration', 'final_rank', 'final_score']

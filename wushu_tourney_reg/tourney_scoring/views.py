@@ -53,13 +53,18 @@ def event_scoring_view(request, tournament_id, tournament_event_id, order):
     if tournament_event.tournament != tournament:
         # invalid link error
         raise PermissionDenied
+    
+    next_tournament_event = TournamentEvent.objects.filter(tournament=tournament, order__gt=tournament_event.order).order_by('order').first()
+    previous_tournament_event = TournamentEvent.objects.filter(tournament=tournament, order__lt=tournament_event.order).order_by('-order').first()
 
     competitor = get_object_or_404(Registration, tournament_event=tournament_event, order=order)
     final_score_obj = competitor.finalscore
     if not final_score_obj:
         # a final score object has not been created for this competitor, possibly because the registration has not been approved yet
         raise PermissionDenied
-
+    
+    next_competitor = Registration.objects.filter(tournament_event=tournament_event, order__gt=order).order_by('order').first()
+    previous_competitor = Registration.objects.filter(tournament_event=tournament_event, order__lt=order).order_by('-order').first()
 
     # check if current user is head judge
     is_head_judge = False
@@ -115,6 +120,10 @@ def event_scoring_view(request, tournament_id, tournament_event_id, order):
         'judge_form': judge_form,
         'is_head_judge': is_head_judge,
         'other_judges_scores': other_judges_scores,
+        'next_competitor': next_competitor,
+        'next_tournament_event': next_tournament_event,
+        'previous_competitor': previous_competitor,
+        'previous_tournament_event': previous_tournament_event
     }
 
     return render(request, 'tourney_scoring/tournament_event_scoring.html', context)

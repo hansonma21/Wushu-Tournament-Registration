@@ -26,6 +26,21 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
 
 {% comment %} General Info Div {% endcomment %}
 {% block dashboard_content %}
+<style>
+    .form-label {
+        display: inline-block;
+        width: 150px;
+        text-align: right;
+        margin-right: 10px;
+    }
+    input, textarea {
+        border: 1px solid #ccc;
+        padding-right: 5px;
+        padding-left: 5px;
+        width: calc(100% - 25px); /* Subtract label width and padding */
+    }
+</style>
+
 <div class="bg-white p-4 rounded-lg shadow-md mt-4">
     <h2 class="text-2xl font-semibold">Competitor's General Information</h2>
     <ul class="text-gray-600">
@@ -44,11 +59,34 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
     </ul>
 </div>
 
+{% comment %} add previous/next competitor buttons here {% endcomment %}
+<div class="mt-4">
+    <div class="flex flex-row justify-between">
+        <div class="flex flex-col items-start">
+            {% if previous_competitor %}
+                <a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=previous_competitor.order %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous Competitor</a>
+            {% elif previous_tournament_event %}
+                {% comment %} go to previous event {% endcomment %}
+                <a href="{% url 'tourney_scoring:tournament_event_dashboard' tournament_id=previous_tournament_event.tournament.id tournament_event_id=previous_tournament_event.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Previous Event</a>
+            {% endif %}
+        </div>
+        
+        <div class="flex flex-col items-end">
+            {% if next_competitor %}
+                <a href="{% url 'tourney_scoring:event_scoring' tournament_id=tournament_event.tournament.id tournament_event_id=tournament_event.id order=next_competitor.order %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next Competitor</a>
+            {% elif next_tournament_event %}
+                {% comment %} go to next event {% endcomment %}
+                <a href="{% url 'tourney_scoring:tournament_event_dashboard' tournament_id=next_tournament_event.tournament.id tournament_event_id=next_tournament_event.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next Event</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 {% comment %} Scoring Div {% endcomment %}
 <div class="bg-gray-300 p-4 rounded-lg shadow-md mt-4">
     <h2 class="text-2xl font-semibold">Scoring</h2>
     <div class="flex flex-wrap">
-        <div class="w-1/2 p-4">
+        <div class="w-full p-4">
             {% if not competitor %}
                 <p>No information available at this time.</p>
             {% else %}
@@ -67,13 +105,39 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
 
                         <div class="bg-white p-4 rounded-lg shadow-md mt-1">
                             {% if judge_form %}
-                                <h3 class="text-2lg font-bold mb-4">Judge Score</h3>
-                                <form method="post">
-                                    {% csrf_token %}
-                                    {{ judge_form.as_p }}
-                                    <input type="hidden" name="form_type" value="judge_form">
-                                    <button type="submit">Submit Personal Score</button>
-                                </form>
+                                <h1 class="text-xl font-bold mb-4">Judge Scoring Form</h1>
+                                <div class="flex justify-center">
+                                    <form class="site-form border-2 border-gray-300 p-4 text-left" method="post">
+                                        {% csrf_token %}
+                                        <div class="grid gap-4">
+                                            <div class="flex justify-between">
+                                                <label for="judge_score" class="block font-bold mb-2 form-label required-field">Score</label>
+                                                <div style="flex-grow: 1;">
+                                                    {{ judge_form.judge_score }}
+                                                    {% if judge_form.judge_score.errors %}
+                                                        <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ judge_form.judge_score.errors.as_text }}</span>
+                                                    {% endif %}
+                                                    <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ judge_form.judge_score.help_text }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <label for="justification" class="block font-bold mb-2 form-label required-field">Comments</label>
+                                                <div style="flex-grow: 1;">
+                                                    {{ judge_form.justification }}
+                                                    {% if judge_form.justification.errors %}
+                                                        <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ judge_form.justification.errors.as_text }}</span>
+                                                    {% endif %}
+                                                    <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ judge_form.justification.help_text }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col items-end">
+                                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-auto">Submit Personal Score</button>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="form_type" value="judge_form">
+                                    </form>
+                                </div>
                             {% else %}
                                 <p>No available judging form at this time.</p>
                             {% endif %}
@@ -84,13 +148,51 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
                             <div class="bg-white p-4 rounded-lg shadow-md mt-4">
 
                                 {% if final_form %}
-                                    <h3 class="text-2lg font-bold">Final Score</h3>
-                                    <form method="post">
-                                        {% csrf_token %}
-                                        {{ final_form.as_p }}
-                                        <input type="hidden" name="form_type" value="final_form">
-                                        <button type="submit">Submit Final Score</button>
-                                    </form>
+                                    <h1 class="text-xl font-bold mb-4">Final Scoring Form</h1>
+                                    <div class="flex justify-center">
+                                        <form class="site-form border-2 border-gray-300 p-4 text-left" method="post">
+                                            {% csrf_token %}
+                                            <div class="grid gap-4">
+                                                <div class="flex justify-between">
+                                                    <label for="final_score" class="block font-bold mb-2 form-label required-field">Final Score</label>
+                                                    <div style="flex-grow: 1;">
+                                                        {{ final_form.final_score }}
+                                                        {% if final_form.final_score.errors %}
+                                                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ final_form.final_score.errors.as_text }}</span>
+                                                        {% endif %}
+                                                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ final_form.final_score.help_text }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex justify-between">
+                                                    <label for="final_rank" class="block font-bold mb-2 form-label required-field">Final Rank</label>
+                                                    <div style="flex-grow: 1;">
+                                                        {{ final_form.final_rank }}
+                                                        {% if final_form.final_rank.errors %}
+                                                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ final_form.final_rank.errors.as_text }}</span>
+                                                        {% endif %}
+                                                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ final_form.final_rank.help_text }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex justify-between">
+                                                    <label for="final_justification" class="block font-bold mb-2 form-label required-field">Final Comments</label>
+                                                    <div style="flex-grow: 1;">
+                                                        {{ final_form.final_justification }}
+                                                        {% if final_form.final_justification.errors %}
+                                                            <span class="text-red-500 text-sm mt-2" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; ">{{ final_form.final_justification.errors.as_text }}</span>
+                                                        {% endif %}
+                                                        <span style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ final_form.final_justification.help_text }}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex flex-col items-end">
+                                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-auto">Submit Final Score</button>
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="form_type" value="final_form">
+                                        </form>
+                                    </div>
                                 {% endif %}
                                 {% if final_form.errors %}
                                     <p>There was an error submitting the final form. Please try again.</p>
@@ -102,7 +204,7 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
                     {% if is_head_judge %}
                         <div class="w-1/2 bg-gray-100 p-4 rounded-lg shadow-md mt-1">
                             {% if other_judges_scores %}
-                                <h3 class="text-2lg font-bold">Other Judges' Scores</h3>
+                                <h3 class="text-xl font-bold mb-4">Other Judges' Scores</h3>
 
                                 {% for judge_score in other_judges_scores %}
                                     <div class="bg-white p-4 rounded-lg shadow-md mt-4">
@@ -124,7 +226,7 @@ Welcome to the competitor dashboard for <span class="text-red-400">{{competitor.
     </div>
 </div>
 
-{% comment %} add previous/next competitor buttons here {% endcomment %}
+
 
 {% endblock %}
 
